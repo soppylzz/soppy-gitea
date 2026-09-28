@@ -1,0 +1,40 @@
+/* Typography (T-004, D-013). @imports must stay first in the assembled theme. */
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Mono:wght@400;700&display=swap");
+
+@font-face {
+  font-family: "Ark Pixel 12 Monospace SC";
+  src: url("/assets/soppy/ark-pixel-12px-monospaced-zh_cn.ttf.woff2") format("woff2");
+  font-display: swap;
+}
+
+:root {
+  /* Overrides base.css:3. The zh_cn build covers CJK; anything it lacks falls through the
+     system stack and, via --fonts-regular (base.css:64), to --fonts-emoji. Accepted
+     tradeoff: 16px body is a 1.333x non-integer scale of its 12px design grid. */
+  --fonts-proportional: "Ark Pixel 12 Monospace SC", -apple-system, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial;
+  /* Fira Code first (coding ligatures), Fira Mono behind it, then the upstream chain
+     (base.css:4). Code is the only non-pixel surface — every code context consumes
+     --fonts-monospace (base.css:96-101, :430, :652; easymde.css:16, 151; ...). */
+  --fonts-monospace: "Fira Code", "Fira Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, var(--fonts-emoji);
+  /* --fonts-emoji keeps base.css:8's dummy value; --fonts-override (base.css:64) is
+     deliberately not set here — see the :lang() block below. */
+}
+
+body {
+  /* Grayscale antialiasing avoids subpixel fringing on bitmap glyph edges (`none`
+     distorts the outline woff2, which browsers rasterize at 16px). */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* font_i18n.css:1-19 points --fonts-override at per-language stacks and --fonts-regular
+   (base.css:64) resolves it first, so CJK-locale pages would skip our body face. Mirroring
+   those selectors at the same specificity (0,2,0, later file wins) keeps ark-pixel in
+   front for every language; upstream's per-language preference is knowingly overridden
+   (D-017). */
+:root :lang(ja),
+:root :lang(zh-CN),
+:root :lang(zh-TW),
+:root :lang(zh-HK),
+:root :lang(ko) {
+  --fonts-override: var(--fonts-proportional);
+}

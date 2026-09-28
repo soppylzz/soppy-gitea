@@ -1,0 +1,519 @@
+/* soppy — pixel component overrides (T-005): an override layer loaded after the base
+   index.css bundle (D-004), so equal-specificity rules win by source order. The palette
+   and the --soppy-* tokens (from palette-light/dark.css) are consumed, not defined here;
+   fonts.css holds the two faces. --soppy-ink-on-color is the text ink for Gitea's
+   colored fills (see the "colored fills" section). */
+
+/* ---- global geometry: zero radii ---- */
+:root {
+  /* base.css:25-27 defines 4px / 6px / 99999px; every var-driven radius in the
+     base bundle (buttons, labels, cards, avatars, ...) resolves through these */
+  --border-radius: 0;
+  --border-radius-medium: 0;
+  --border-radius-full: 0;
+}
+
+/* ---- type scale (T-008) — the single place sizes are decided ---- */
+/* ONE KNOB: the root font-size, which is also the rem basis for every upstream rem/em
+   dimension (padding, control heights, headings) — a UI scale, not a text size. Every size
+   below is pinned in rem against it: code 0.875rem (GitHub's 12:14 code:body ratio),
+   labels and mini/small buttons 0.75rem (ark-pixel's native grid), body and
+   --line-height-code on the 24px grid. Upstream headings keep their own rem/em scale, and
+   the weight pins below change no size. Nothing else in this file declares font-size or
+   line-height. */
+:root {
+  /* base.css:16 (20px): code leading, on the 24px grid */
+  --line-height-code: 24px;
+  /* base.css:32 (14px): checkbox/radio box + its label's line-height
+     (checkbox.css:6-7, 22-23, 34-36, 73-74) */
+  --checkbox-size: 1rem;
+  /* base.css:42 (12px): consumed by label.css:14 and label.css:231, which must match it
+     or chips change height */
+  --font-size-label: 0.75rem;
+}
+
+/* the knob */
+html {
+  font-size: 16px;
+}
+
+/* base.css:75-78 declares `font-size: 14px` on body directly, so a root-only size would
+   leave body copy at 14px; restating it as 1rem keeps the root in charge. base.css:81 sets
+   line-height 20px — 24px is 1.5 on the 12px grid. */
+body {
+  font-size: 1rem;
+  line-height: 24px;
+}
+
+/* base.css:106-108 shrinks code to 0.95em, which would compound with whatever parent it
+   sits in (15.2px, off-grid); pinned in rem instead: 0.875rem = 14px, GitHub's code:body
+   ratio. */
+pre,
+code,
+samp,
+.tw-font-mono {
+  font-size: 0.875rem;
+}
+
+/* Upstream button sizes are px (button.css:116-120 mini 11px, :126-131 tiny 12px,
+   :139-145 small 13px) and would ignore the knob; mini and small are re-derived at
+   0.75rem = 12px, tiny is already 12px. Selectors mirror button.css to win by order. */
+.ui.ui.ui.ui.mini.button {
+  font-size: 0.75rem;
+}
+
+.ui.small.buttons .dropdown,
+.ui.small.buttons .dropdown .menu > .item,
+.ui.small.buttons .button,
+.ui.ui.ui.ui.small.button {
+  font-size: 0.75rem;
+}
+
+/* base.css:648-654 pins these lines to 12px and base.css:668 pins .code-inner with a
+   `font:` shorthand — inheritance reaches neither, so the size is restated at the same
+   specificity, mirroring upstream's own selector list (D-004: later file wins).
+   Deliberately NOT prefixed with .file-view.code-view: that pair exists only on the file
+   view (view_file.tmpl:98) and blame (blame.tmpl:32), while a diff is `file-body file-code
+   code-diff` (diff/box.tmpl:172) — the prefix left diff lines at 12px on our 24px leading.
+   This list also covers search results (searchfile.tmpl:9), blob excerpts and markup code
+   previews. */
+.lines-num,
+.lines-escape,
+.lines-code,
+.code-inner {
+  font-size: 0.875rem;
+}
+
+/* ---- anti-smear weight pins ---- */
+/* Upstream asks for heavier weights than this single-400 bitmap face has, and the browser
+   synthesises them by smearing the outlines. Each pin mirrors the upstream selector so it
+   wins by source order (D-004) and names the rule it neutralises. */
+
+/* header.css:10 (medium): .ui.header — section/modal headings and the home hero h1s
+   (home.tmpl:7, 16, 24, 34, 42). The raw h1/h2 arm covers the tagline (home.tmpl:10) and
+   devtest headings; user-authored .markup headings keep their semibold
+   (markup/content.css:73). */
+.page-content h1,
+.page-content h2,
+.ui.header {
+  font-weight: var(--font-weight-normal);
+}
+
+/* label.css:15 (medium): chips, sized by --font-size-label above */
+.ui.label {
+  font-weight: var(--font-weight-normal);
+}
+
+/* menu.css:89 (medium): side-nav captions ("User Settings", ...). Mirrored at the same
+   specificity — a shorter selector cannot beat this rule (0,4,0). */
+.ui.menu .header.item,
+.ui.vertical.menu .header.item {
+  font-weight: var(--font-weight-normal);
+}
+
+/* base.css:791-794 (semibold) and menu.css:407 (medium): the active tab of the
+   repo/org/explore/auth strips and of .ui.tabular menus. base.css:793 shares its block
+   with .resize-for-semibold::before, a measurement helper: untouched, it just reserves
+   slack. */
+.ui.tabular.menu .active.item,
+.ui.secondary.pointing.menu .active.item {
+  font-weight: var(--font-weight-normal);
+}
+
+/* menu.css:219 (medium): the active item of a nested sub-menu in a vertical menu (e.g.
+   the admin side nav's open group) */
+.ui.vertical.menu .item .menu .active.item {
+  font-weight: var(--font-weight-normal);
+}
+
+/* navbar.css:112-121 (bold): count dots/badges; selector mirrors navbar.css:118-121 */
+#navbar a.item .notification_count,
+#navbar a.item .header-stopwatch-dot,
+#navbar .item .navbar-admin-badge {
+  font-weight: var(--font-weight-normal);
+}
+
+/* ---- geometry: hard-coded radii upstream ignores the vars for ---- */
+/* Fomantic remnants use a literal 0.28571429rem (4px) — killed per surface below; the
+   selector citations live in the T-005 task log */
+
+/* forms and inputs */
+.ui.input > input,
+.ui.form input:not([type="checkbox"], [type="radio"]),
+.ui.search > .prompt,
+.ui.form textarea,
+.ui.icon.input > i.icon,
+.ui[class*="left icon"].input > i.icon,
+.ui.action.input > .dropdown:first-child,
+.ui.action.input > .button:first-child,
+.ui.action.input > .dropdown:last-child,
+.ui.action.input > .button:last-child {
+  border-radius: 0;
+}
+
+/* native checkboxes / radios: squares */
+input[type="radio"],
+input[type="checkbox"] {
+  border-radius: 0;
+}
+
+/* toggle switch: square track and knob */
+.ui.toggle.checkbox label::before,
+.ui.toggle.checkbox label::after {
+  border-radius: 0;
+}
+
+/* segments */
+.ui.segment,
+.ui.grid.segment,
+.ui.segments,
+.ui.segments:not(.horizontal) > .segment:first-child,
+.ui.segments:not(.horizontal) > .segment:last-child,
+.ui.segments:not(.horizontal) > .segment:only-child,
+.ui.segments:not(.horizontal) > .segment:has(~ .tw-hidden),
+.ui.horizontal.segments,
+.ui.horizontal.segments > .segment:first-child,
+.ui.horizontal.segments > .segment:last-child,
+.ui.attached.segment:last-child,
+.ui.attached.segment:has(+ :not(.ui.attached.segment)),
+.ui[class*="top attached"].segment,
+.ui[class*="top attached"].segment:last-child,
+.ui.segment[class*="bottom attached"] {
+  border-radius: 0;
+}
+
+/* menus */
+.ui.menu,
+.ui.menu > .item:first-child,
+.ui.menu .dropdown.item .menu,
+.ui.vertical.menu > .item:first-child,
+.ui.vertical.menu > .item:last-child,
+.ui.vertical.menu > .active.item:first-child,
+.ui.vertical.menu > .active.item:last-child,
+.ui.vertical.menu > .active.item:only-child,
+.ui.pagination.menu .item:last-child,
+.ui.compact.menu .item:last-child,
+.ui.compact.menu:not(.secondary) .item:last-child,
+.ui.secondary.menu .item,
+.ui.secondary.menu .active.item,
+.ui.secondary.menu .dropdown.item > .menu,
+.ui[class*="top attached"].menu,
+.ui.top.attached.menu > .item:first-child {
+  border-radius: 0;
+}
+
+/* upstream pins these two with !important (menu.css:273 tabular active tab,
+   menu.css:367 secondary vertical item) */
+.ui.tabular.menu .active.item,
+.ui.tabular.menu .active.item:hover,
+.ui.secondary.vertical.menu > .item {
+  border-radius: 0 !important; /* matches upstream !important in menu.css */
+}
+
+/* tables */
+.ui.table,
+.ui.table > thead > tr:first-child > th:first-child,
+.ui.table > thead > tr:first-child > th:last-child,
+.ui.table > thead > tr:first-child > th:only-child,
+.ui.table > tfoot > tr:first-child > th:first-child,
+.ui.table > tfoot > tr:first-child > th:last-child,
+.ui[class*="bottom attached"].table {
+  border-radius: 0;
+}
+
+/* dropdowns */
+.ui.dropdown .menu,
+.ui.selection.dropdown,
+.ui.selection.dropdown .menu,
+.ui.upward.dropdown > .menu,
+.ui.pointing.dropdown > .menu {
+  border-radius: 0;
+}
+
+/* upstream pins floating/active/upward selection dropdown radii with !important
+   (dropdown.css:318, 630, 635, 730, 734) */
+.ui.active.empty.selection.dropdown,
+.ui.active.upward.selection.dropdown,
+.ui.upward.selection.dropdown.visible,
+.ui.floating.dropdown .menu,
+.ui.floating.dropdown > .menu {
+  border-radius: 0 !important; /* matches upstream !important in dropdown.css */
+}
+
+/* misc surfaces */
+.ui.top.attached.header,
+.ui.search > .results,
+.ui.circular.label,
+.navbar-left > .item,
+.navbar-right > .item,
+.navbar-mobile-right > .item,
+#navbar a.item .notification_count,
+#navbar a.item .header-stopwatch-dot,
+#navbar .item .navbar-admin-badge,
+.inline-code-block,
+.language-stats,
+.indicator-dot::after,
+.code-editor-container .cm-lint-marker-error,
+.code-editor-container .cm-lint-marker-warning,
+.EasyMDEContainer .editor-toolbar button {
+  border-radius: 0;
+}
+
+/* the two spinner literals (dropdown.css:553, 568) keep their own round radius; a spinner
+   that reads --border-radius-full above is squared, like the rest of the geometry */
+
+/* ---- buttons ---- */
+/* MC-style bevel: lit top/left edge, shaded bottom/right. Upstream hover/active only swap
+   background/color vars, so the bevel survives state changes (button.css:30-47, 160-177,
+   183-198, 216-275) */
+.ui.button,
+::file-selector-button {
+  border-color: var(--soppy-border-strong);
+  box-shadow: var(--soppy-bevel-raised);
+}
+
+/* pressed bevel: edges flip */
+.ui.button:active,
+.ui.active.button,
+::file-selector-button:active {
+  box-shadow: var(--soppy-bevel-pressed);
+}
+
+/* upstream deliberately flattens this floating mini button with !important
+   (review.css:10) — left alone on purpose */
+
+/* ---- labels ---- */
+/* upstream .ui.label has border-width 0 (label.css:16). Specificity stays at
+   .ui.label:not(.scope-parent) so the colored variants (label.css:69+) and hover states
+   keep overriding border-color; scope-parent is excluded or the composite two-tone label
+   gets a rectangle drawn around it */
+.ui.label:not(.scope-parent) {
+  border-width: 1px;
+  border-color: var(--color-secondary);
+}
+
+/* ---- colored fills: Gitea hardcodes white text on them ---- */
+/* Every solid .ui.<color>.label and .ui.<color>.button paints its text with
+   `color: var(--color-white)` (label.css:90-182, button.css:216-268), as do the Actions
+   status badges (actions.css:9-28). On the dark ladder's bright named colors that puts
+   white text between 1.34:1 (green — the Open issue badge, view_title.tmpl:50) and
+   3.96:1 (purple — Merged), below AA. --soppy-ink-on-color carries the flip.
+   Hover is listed because upstream re-declares the color there (label.css:95-98) at
+   (0,4,1), which outranks a rest-state (0,4,0) rule. The .basic variants keep their
+   colored text: .ui.ui.ui.basic.<color>.label and .ui.basic.<color>.button are more
+   specific than anything here. */
+.ui.ui.ui.red.label,
+.ui.ui.ui.orange.label,
+.ui.ui.ui.yellow.label,
+.ui.ui.ui.green.label,
+.ui.ui.ui.purple.label,
+a.ui.ui.ui.red.label:hover,
+a.ui.ui.ui.orange.label:hover,
+a.ui.ui.ui.yellow.label:hover,
+a.ui.ui.ui.green.label:hover,
+a.ui.ui.ui.purple.label:hover,
+.ui.red.button,
+.ui.red.buttons .button,
+.ui.green.button,
+.runner-container .task-status-success,
+.runner-container .task-status-failure,
+.runner-container .task-status-running,
+.runner-container .task-status-cancelled,
+.runner-container .task-status-blocked {
+  color: var(--soppy-ink-on-color);
+}
+
+/* ---- dashboard activity feed: keycap badge ---- */
+/* #activity-feed exists in exactly one template (feeds.tmpl:1, dashboard feed), so the
+   ID scoping is what keeps this off the other `.item-trailing` users (42 more occurrences
+   across 30 templates) — settings, danger zone, org/team, package pages — where the slot
+   wraps real buttons and must keep flex-list.css:62-69's end alignment. In the feed the
+   slot holds one decorative 32px action octicon (feeds.tmpl:125-127), so it becomes a
+   static keycap: 28px square, raised-bevel texture, content centred, border-box per
+   normalize.css:24-28. The size and the svg arithmetic below must stay in step.
+   No hover/active rules are authored and none exist upstream for this element
+   (flex-list.css:58 only touches anchors). No hard drop shadow on purpose:
+   --soppy-shadow-hard is reserved for the floating surfaces, and a 4px offset repeated
+   down every feed row would read as noise. */
+#activity-feed .item-trailing {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--soppy-border-strong);
+  background: var(--color-button);
+  box-shadow: var(--soppy-bevel-raised);
+}
+
+/* the octicon is a 32px svg from the template (feeds.tmpl:126). width/height:100% fills
+   the bordered content box and the 4px padding insets it: 28 - 2*1px border - 2*4px
+   padding = 18px for the glyph, 4px on each side. Relies on the global
+   box-sizing:border-box (normalize.css:24-28); display:block kills the baseline gap. */
+#activity-feed .item-trailing > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* the template's tw-mr-1 (feeds.tmpl:126) would push the glyph off-centre, and it
+     needs !important: tailwind.config.ts:27 compiles utilities with `important: true` */
+  margin-right: 0 !important;
+  padding: 4px;
+}
+
+/* ---- inputs ---- */
+/* focus gets a 1px inset ring on top of the upstream primary border
+   (input.css:29-31) — reads as a chunky 2px pixel frame */
+.ui.input > input:focus,
+.ui.form input:not([type="checkbox"], [type="radio"]):focus,
+.ui.search > .prompt:focus,
+.ui.form textarea:focus {
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+
+/* ---- navbar ---- */
+#navbar {
+  border-bottom-color: var(--soppy-border-strong);
+}
+
+/* active item: pressed-bevel look */
+#navbar .item.active {
+  box-shadow: var(--soppy-bevel-pressed);
+}
+
+/* ---- elevation: soft shadows become the hard offset shadow token ---- */
+.ui.dropdown .menu,
+.ui.selection.active.dropdown .menu,
+.ui.selection.dropdown:focus .menu,
+.ui.selection.active.dropdown:hover .menu,
+.ui.menu .dropdown.item .menu,
+.ui.upward.dropdown > .menu,
+.ui.upward.selection.dropdown .menu,
+.ui.modal,
+.toastify,
+.cm-command-palette,
+text-expander .suggestions,
+.tribute-container,
+overflow-menu .overflow-menu-popup,
+.ui.search > .results,
+.tippy-box[data-theme="default"],
+.tippy-box[data-theme="bare"],
+.tippy-box[data-theme="menu"],
+.tippy-box[data-theme="box-with-header"] {
+  box-shadow: var(--soppy-shadow-hard);
+}
+
+/* closed-dropdown focus/hover glows: replaced by the border-color signal */
+.ui.selection.active.dropdown,
+.ui.selection.active.dropdown:hover,
+.ui.upward.selection.dropdown.visible,
+.ui.upward.active.selection.dropdown:hover {
+  box-shadow: none;
+}
+
+/* upstream pins the floating menu shadow with !important (dropdown.css:729) */
+.ui.floating.dropdown .menu,
+.ui.floating.dropdown > .menu {
+  box-shadow: var(--soppy-shadow-hard) !important; /* matches dropdown.css:729 */
+}
+
+/* toggle knob: raised bevel instead of upstream's 1px 1px 4px soft shadow
+   (checkbox.css:143), proportionate to the 18px knob */
+.ui.toggle.checkbox label::after {
+  box-shadow: var(--soppy-bevel-raised);
+}
+
+/* migrate cards: upstream pins rest (none) and hover (soft) shadows with !important
+   (repo.css:1648, 1657); scaling disabled too — instant state changes only */
+.migrate-entry:hover {
+  transform: none;
+  box-shadow: var(--soppy-shadow-hard) !important; /* matches repo.css:1657 */
+}
+
+/* ---- focus and selection ---- */
+/* chunkier keyboard ring, still inset so it cannot clip in overflow containers
+   (upstream: 2px / -2px, base.css:315-320) */
+a:focus-visible,
+button:focus-visible,
+.ui.button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: -3px;
+}
+
+/* primary fill instead of upstream primary-light-1 + white (base.css:253-256);
+   both variants resolve contrast through the palette vars */
+::selection,
+relative-time::part(root)::selection {
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+/* ---- home hero ---- */
+/* .page-content.home img.logo is the landing-page logo img (home.tmpl:5, 220x220 attrs,
+   max-width 220px via home.css:1-3); the header logo keeps upstream's logo.svg.
+   brand.png is 2172x724 (exactly 3:1); 576x192 is 48x16 grid units and keeps that ratio.
+   object-fit: contain still degrades cleanly to the square svg where content: url() is
+   unsupported (Safari). Margins are one grid unit each side (12px still clears the
+   navbar's bottom border). */
+.page-content.home img.logo {
+  content: url("/assets/soppy/brand.png");
+  width: 576px;
+  max-width: 100%;
+  height: 192px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  margin: 12px 0 12px;
+}
+
+/* .page-content.home div.hero is the tagline block on the landing page only
+   (templates/home.tmpl:6); the element-qualified div avoids the four h1.hero section
+   headers on the same page (home.tmpl:16, 24, 34, 42). The art is 1962x802 with a
+   transparent sky; bottom-center placement puts the characters on the ground line under
+   the tagline. 384px wide (32 grid units) with a 120px (10-unit) reserved ground band;
+   at that width the art renders ~157px tall, so its top ~37px of transparent sky sits
+   behind the tagline. Below 768px the art goes full width and the band is 84px.
+   Only brand art gets image-rendering: pixelated — avatars and photos are never touched */
+.page-content.home div.hero {
+  padding-bottom: 120px;
+  background-image: url("/assets/soppy/landscape.png");
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: min(100%, 384px) auto;
+  image-rendering: pixelated;
+}
+
+@media (max-width: 767.98px) {
+  .page-content.home div.hero {
+    padding-bottom: 84px;
+    background-size: 100% auto;
+  }
+}
+
+/* ---- landing hero: the tagline wins over the art ---- */
+/* The art is painted inside the hero's own box, so it can never reach the logo above it
+   — the logo is a sibling (home.tmpl:5) and the hero starts below (home.tmpl:6). It does
+   reach the tagline, by a width-dependent amount: landscape.png is 1962x802 and its
+   content only starts 20.7% down (first row above 1% alpha at y=166), so at >=768px the
+   overlap is transparent sky; below 768px up to ~144px of real artwork sits behind the
+   text. The fix is the classic pixel-game one: a hard, 0-blur, 8-direction outline in
+   --color-body. Deliberately not a scrim — CSS cannot measure the text box, so a scrim
+   tall enough to cover the tagline would slice the characters on mobile — and not extra
+   padding, which would have to exceed the art's own height there (~287px). --color-body
+   is exactly what the hero is painted on (base.css:84), so the outline disappears where
+   no art is behind the text and reads as a cut-out where there is; it flips with the
+   palette, so one declaration serves light and dark. Nothing upstream declares
+   text-shadow (no hits in web_src/css), so no !important. 4px = one glyph pixel at the
+   h2's 4x ark-pixel scale. */
+.page-content.home div.hero h1,
+.page-content.home div.hero h2 {
+  text-shadow:
+    -4px -4px 0 var(--color-body),
+     0   -4px 0 var(--color-body),
+     4px -4px 0 var(--color-body),
+    -4px    0 0 var(--color-body),
+     4px    0 0 var(--color-body),
+    -4px  4px 0 var(--color-body),
+     0    4px 0 var(--color-body),
+     4px  4px 0 var(--color-body);
+}
+
