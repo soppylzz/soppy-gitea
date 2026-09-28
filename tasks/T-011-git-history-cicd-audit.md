@@ -1,6 +1,6 @@
 # T-011 — Prepare atomic history and verify GitHub delivery
 
-- Status: in-progress
+- Status: done
 - Owner: codex
 - Branch: main
 - Depends: T-009, D-021
@@ -23,7 +23,7 @@ verified `main` branch to the empty `origin` repository.
       declared version
 - [x] The workflows use least-privilege token permissions and immutable action pins
 - [x] The release workflow serializes runs so concurrent pushes cannot race for a tag
-- [ ] `main` is pushed to `origin` and the remote CI/release results are verified
+- [x] `main` is pushed to `origin` and the remote CI/release results are verified
 
 ## Handoff log
 
@@ -44,3 +44,11 @@ verified `main` branch to the empty `origin` repository.
 - 2026-09-28 codex: GitHub reports Actions enabled. Each workflow explicitly overrides
   the repository's broad default permission: CI uses `contents: read`; release uses only
   `contents: write`, which `gh release create` needs to create its tag and release.
+- 2026-09-28 codex: replaced the unpublished root commit with five ordered commits:
+  repository workflow, theme sources, build/preview tooling, project docs, and release
+  automation. `backup/pre-reorganization-20260928` preserves the original commit locally;
+  the final tree differs only by the workflow hardening and this task record.
+- 2026-09-28 codex: first push of `main` completed both remote workflows successfully
+  (CI run 36431736108, Release run 36431735986). GitHub created `v0.1.0` at the pushed
+  commit and published `soppy-0.1.0.zip`; the downloaded asset passed `unzip -t` and its
+  contents match the supported install layout. No manual tag was created or pushed.

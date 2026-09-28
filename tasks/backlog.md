@@ -16,7 +16,7 @@ work. Split a row into per-concern tasks when it grows (see T-006).
 | T-008 | Pixel grid font-size snap pass (needs G3 feedback) | agent-components | review |
 | T-009 | Release pipeline: packaging, CI and bilingual README | orchestrator | review |
 | T-010 | Review fixes: fill contrast, diff code size, missed overrides | orchestrator | review |
-| T-011 | Prepare atomic history and verify GitHub delivery | codex | in-progress |
+| T-011 | Prepare atomic history and verify GitHub delivery | codex | done |
 
 ## Notes (expand into the task file when claiming)
 
