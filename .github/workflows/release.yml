@@ -1,0 +1,58 @@
+name: Release
+
+# A release is cut from version.txt (D-021): bump it on main and this workflow resolves
+# the version, tags the commit and publishes the archive. Nobody tags by hand, and the
+# tag only appears at a release.
+on:
+  push:
+    branches: [main]
+    paths: ["version.txt"]
+  workflow_dispatch:
+
+permissions:
+  contents: write # required to create the tag and the release
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0 # version.sh reads the existing tags
+
+      - name: Resolve the version
+        id: version
+        run: |
+          version="$(scripts/version.sh)"
+          if git rev-parse -q --verify "refs/tags/$version" >/dev/null; then
+            echo "$version is already released; nothing to do"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+            echo "asset=soppy-${version#v}.zip" >> "$GITHUB_OUTPUT"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build and verify the theme
+        if: steps.version.outputs.skip == 'false'
+        run: scripts/check.sh
+
+      - name: Package the theme
+        if: steps.version.outputs.skip == 'false'
+        run: scripts/package.sh "${{ steps.version.outputs.version }}"
+
+      - name: Publish the release
+        if: steps.version.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.version }}" \
+            "dist/${{ steps.version.outputs.asset }}" \
+            --target "$GITHUB_SHA" \
+            --title "soppy ${{ steps.version.outputs.version }}" \
+            --notes-file RELEASE.md

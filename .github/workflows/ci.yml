@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      # No toolchain to install: build.sh is plain shell and the checks need
+      # only bash, coreutils and python3 (preinstalled on the runner).
+      - name: Build and verify the theme
+        run: scripts/check.sh
+
+      - name: Package the release archive
+        run: scripts/package.sh "ci-${GITHUB_SHA::7}"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: soppy-theme
+          path: dist/soppy-*.zip
+          if-no-files-found: error
