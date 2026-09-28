@@ -1,0 +1,12 @@
+# os
+.DS_Store
+
+# toolchains
+node_modules/
+dist/
+
+# personal agent settings
+.claude/settings.local.json
+
+# local gitea test instance (layout decided by task T-007)
+gitea-root/
