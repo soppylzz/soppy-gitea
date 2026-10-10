@@ -1,32 +1,34 @@
-<h1 align="center"><img width="40%" src="./brand.png" alt="soppy-gitea" /></h1>
+<h1 align="center"><img width="60%" src="./assets/wordmark.png" alt="soppy-gitea" /></h1>
 
-<span align="center"> 
+<p align="center">
+  <a href="https://github.com/soppylzz/soppy-gitea/releases"><img src="https://img.shields.io/github/v/release/soppylzz/soppy-gitea" alt="Latest GitHub release" /></a>
+  <img src="https://img.shields.io/badge/Gitea-1.27.3-609926" alt="Gitea 1.27.3" />
+  <img src="https://img.shields.io/badge/CSS-theme-1572B6" alt="CSS theme" />
+</p>
 
-[English](README.md) | [简体中文](README.zh-cn.md) 
+<div align="center">
 
-</span>
+[English](README.md) | [简体中文](README.zh-cn.md)
 
-**Gitea 1.27.3** 的像素风格主题 —— 浅色与深色两套，纯 CSS：不改动 JavaScript、模板或 Go
-代码。
+</div>
 
-主题是一个*覆盖层*：Gitea 永远先加载自带的基础样式表，主题文件在其后加载，因此主题只覆盖
-需要改的部分。
+适用于 **Gitea 1.27.3** 的像素风格主题，提供浅色与深色两套配色。主题通过 CSS 覆盖样式，无需修改 JavaScript、模板或 Go 代码。
 
-## 主题包含什么
+## 特性
 
 - **像素字体** —— 全套界面使用 Ark Pixel 12px Monospaced（含中日韩字形），代码使用
   Fira Code / Fira Mono
 - **两套完整色板** —— 冷调中性的浅色表面与深色变体，各自填满 Gitea 的整个 `:root`
   token 阶梯，不会漏出上游默认值
 - **方正几何** —— 零圆角、1px 边框、硬偏移阴影与凸起/凹陷斜面，取代 Gitea 的圆角与模糊投影
-- **两个变体都通过 AA 对比度**（实测）—— 包括 Gitea 用硬编码白字绘制的彩色状态徽章与危险按钮
+- **彩色控件的文字对比度** —— 深色变体会调整状态徽章和按钮的文字颜色，避免 Gitea 硬编码的白字低于 AA 对比度
 - **品牌美术** —— 首页主视觉与字标，以及配套 favicon
 
 ## 安装
 
-### 从 Release 安装（推荐）
+### 从 Release 安装
 
-每个 [release](../../releases) 附带 `soppy-<version>.zip`，压缩包目录结构与 Gitea 实例的
+每个 [release](https://github.com/soppylzz/soppy-gitea/releases) 附带 `soppy-<version>.zip`，压缩包目录结构与 Gitea 实例的
 `custom/public/` 完全对应，因此安装只需一次拷贝：
 
 ```sh
@@ -59,9 +61,9 @@ DEFAULT_THEME = soppy-dark   ; 可选
 
 然后在 **设置 → 外观** 中选择主题。
 
-### 说明
+## 使用说明
 
-- 代码字体（Fira Code / Fira Mono）通过 `@import` 从 Google Fonts 加载；服务器无外网时
+- 代码字体（Fira Code / Fira Mono）通过 `@import` 从 Google Fonts 加载；浏览器无法访问 Google Fonts 时
   代码会回退到系统等宽字体栈。正文字体已随包分发，始终可用。
 - Gitea 对 `/assets/*` 有 6 小时缓存；升级后“主题没变化”通常是浏览器缓存所致。
 - 卸载：删除两个 `theme-soppy-*.css`，从 `THEMES` 中移除 `soppy-*`，重启即可。

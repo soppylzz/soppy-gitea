@@ -1,18 +1,19 @@
-<h1 align="center"><img width="40%" src="./brand.png" alt="soppy-gitea" /></h1>
+<h1 align="center"><img width="60%" src="./assets/wordmark.png" alt="soppy-gitea" /></h1>
+<p align="center">
+  <a href="https://github.com/soppylzz/soppy-gitea/releases"><img src="https://img.shields.io/github/v/release/soppylzz/soppy-gitea" alt="Latest GitHub release" /></a>
+  <img src="https://img.shields.io/badge/Gitea-1.27.3-609926" alt="Gitea 1.27.3" />
+  <img src="https://img.shields.io/badge/CSS-theme-1572B6" alt="CSS theme" />
+</p>
 
-<span align="center"> 
+<div align="center">
 
-[English](README.md) | [简体中文](README.zh-cn.md) 
+[English](README.md) | [简体中文](README.zh-cn.md)
 
-</span>
+</div>
 
-A pixel-art style theme for **Gitea 1.27.3** — light and dark, CSS only: no JavaScript,
-template or Go changes.
+A pixel-art theme for **Gitea 1.27.3**, with light and dark variants. It uses CSS overrides without changing JavaScript, templates, or Go code.
 
-The theme is an *override layer*: Gitea always loads its own base stylesheet first and
-links the theme after it, so the theme only overrides what it needs.
-
-## What you get
+## Features
 
 - **Pixel typography** — the Ark Pixel 12px Monospaced face (CJK included) across the
   whole UI, with Fira Code / Fira Mono for code
@@ -20,15 +21,15 @@ links the theme after it, so the theme only overrides what it needs.
   filling Gitea's entire `:root` token ladder so no upstream default leaks through
 - **Square geometry** — zero radii, 1px borders, hard offset shadows and raised/pressed
   bevels in place of Gitea's soft corners and blurred elevation
-- **AA text contrast in both variants**, measured — including the colored status badges
-  and danger buttons, which Gitea paints with hardcoded white text
+- **Contrast-aware colored controls** — adjusts text on status badges and buttons in the
+  dark variant, where Gitea's hardcoded white text would fall below AA contrast
 - **Brand art** — a landing-page hero and wordmark, plus a matching favicon
 
-## Install
+## Installation
 
-### From a release (recommended)
+### From a release
 
-Every [release](../../releases) ships `soppy-<version>.zip`, laid out to mirror a Gitea
+Every [release](https://github.com/soppylzz/soppy-gitea/releases) ships `soppy-<version>.zip`, laid out to mirror a Gitea
 instance's `custom/public/` directory, so installing it is one copy:
 
 ```sh
@@ -63,10 +64,10 @@ DEFAULT_THEME = soppy-dark   ; optional
 
 Pick the theme under **Settings → Appearance**.
 
-### Notes
+## Notes
 
-- The code font (Fira Code / Fira Mono) is loaded from Google Fonts via `@import`; on a
-  server without outbound network access, code falls back to the system monospace stack.
+- The code font (Fira Code / Fira Mono) is loaded from Google Fonts via `@import`; when
+  the browser cannot reach Google Fonts, code falls back to the system monospace stack.
   The body face is bundled and always available.
 - Gitea caches `/assets/*` for 6 hours; a theme that "does not change" after an update is
   usually the browser cache.
